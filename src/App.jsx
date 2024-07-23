@@ -11,6 +11,8 @@ const FILTER_MAP = {
 
 const FILTER_NAMES = Object.keys(FILTER_MAP);
 
+const LOCAL_STORAGE_KEY = "task-list";
+
 function usePrevious(value) {
   const ref = useRef();
   useEffect(() => {
@@ -19,8 +21,10 @@ function usePrevious(value) {
   return ref.current;
 }
 
-function App(props) {
-  const [tasks, setTasks] = useState(props.tasks);
+function App() {
+  const [tasks, setTasks] = useState(() => {
+    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+  });
   const [filter, setFilter] = useState("All");
   function toggleTaskCompleted(id) {
     setTasks(
@@ -75,6 +79,8 @@ function App(props) {
       listHeadingRef.current.focus();
     }
   }, [tasks.length, prevTaskLength]);
+
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tasks));
 
   return (
     <div className="todoapp stack-large">
